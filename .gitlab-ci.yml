@@ -47,7 +47,12 @@ agent-review:
     - echo "OPENBEAGLE_AGENT_TARGET_BRANCH=$OPENBEAGLE_AGENT_TARGET_BRANCH"
     - echo "OPENBEAGLE_OLLAMA_BASE_URL=$OPENBEAGLE_OLLAMA_BASE_URL"
     - echo "OPENBEAGLE_OLLAMA_MODEL=$OPENBEAGLE_OLLAMA_MODEL"
-    - curl -s "$OPENBEAGLE_OLLAMA_BASE_URL/api/tags" | jq '.models[].name'
+    - echo "Testing Ollama connectivity..."
+    - getent hosts host.docker.internal || true
+    - ip route || true
+    - curl -v --fail-with-body "$OPENBEAGLE_OLLAMA_BASE_URL/api/tags" -o out/ollama-tags.json
+    - cat out/ollama-tags.json
+    - jq '.models[].name' out/ollama-tags.json    - curl -s "$OPENBEAGLE_OLLAMA_BASE_URL/api/tags" | jq '.models[].name'
     - bash scripts/collect_commit_context.sh > out/commit_context.json
     - python scripts/generate_agent_review.py out/commit_context.json > out/agent-review.md
     - bash scripts/create_or_update_mr.sh out/agent-review.md
