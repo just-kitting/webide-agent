@@ -48,25 +48,22 @@ Allowed local endpoints:
 
 ## First milestones
 
-### Milestone 1: CI feedback bot
+### Milestone 1: commit-to-MR feedback bot
 
-When a merge request pipeline runs:
+When a new commit is pushed to a non-default branch:
 
-1. Collect CI context:
-   - merge request title and IID
-   - branch names
+1. Run CI on the GitLab runner at `ollama.openbeagle.org`.
+2. Collect branch context:
+   - branch name
+   - target branch
+   - commit list
    - changed files
-   - recent diff summary
-   - failed job names
-   - relevant log excerpts
+   - compact diff
+3. Ask local Ollama for review and maintainer questions.
+4. Create a merge request if one does not already exist.
+5. Update the MR description and post a note with the generated feedback.
 
-2. Ask a local model for feedback:
-   - summarize what failed
-   - identify likely root causes
-   - suggest next actions
-   - avoid overclaiming
-
-3. Post a merge request note.
+This workflow is intended to request additional human input from the user for every new commit or branch.
 
 ### Milestone 2: Web IDE assistant prototype
 
@@ -141,7 +138,7 @@ Later, when building the Web IDE agent, use LiteLLM:
     OPENBEAGLE_LLM_BASE_URL=https://llm.openbeagle.org/v1
     OPENBEAGLE_LLM_API_KEY=<LiteLLM key>
     OPENBEAGLE_LLM_MODEL=openbeagle-coder
-    
+
 ## Merge request commenting policy
 
 CI feedback comments must be clearly machine-generated.
