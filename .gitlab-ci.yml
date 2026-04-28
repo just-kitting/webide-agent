@@ -1,27 +1,38 @@
+spec:
+  inputs:
+    target_branch:
+      default: "main"
+      description: "Branch the agent should create merge requests against."
+    ollama_base_url:
+      default: "http://127.0.0.1:11434"
+      description: "Local Ollama endpoint available to the runner."
+    ollama_model:
+      default: "qwen3-coder:30b"
+      description: "Local Ollama model for review generation."
+---
+
 stages:
   - feedback
-
-variables:
-  OPENBEAGLE_OLLAMA_BASE_URL: "http://127.0.0.1:11434"
-  OPENBEAGLE_OLLAMA_MODEL: "qwen3-coder:30b"
-  OPENBEAGLE_AGENT_TARGET_BRANCH: "main"
-  OPENBEAGLE_AGENT_MR_TITLE_PREFIX: "Agent review"
 
 agent-review:
   stage: feedback
   tags:
     - ollama
   image: python:3.12-slim
+  variables:
+    OPENBEAGLE_AGENT_TARGET_BRANCH: "$[[ inputs.target_branch ]]"
+    OPENBEAGLE_OLLAMA_BASE_URL: "$[[ inputs.ollama_base_url ]]"
+    OPENBEAGLE_OLLAMA_MODEL: "$[[ inputs.ollama_model ]]"
   rules:
-    # Run on ordinary branch pushes.
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
+    # Run automatically on any branch push.
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH'
+      when: on_success
 
-    # Allow manual testing from the GitLab UI.
+    # Also allow manual Run Pipeline from the UI.
     - if: '$CI_PIPELINE_SOURCE == "web"'
-      when: manual
-      allow_failure: true
+      when: on_success
 
-    # Do not run from MR pipelines. This job creates/updates MRs.
+    # Otherwise do not add the job.
     - when: never
   before_script:
     - apt-get update
@@ -31,8 +42,11 @@ agent-review:
   script:
     - mkdir -p out
     - echo "CI_PIPELINE_SOURCE=$CI_PIPELINE_SOURCE"
-    - echo "CI_COMMIT_BRANCH=$CI_COMMIT_BRANCH"
-    - echo "CI_DEFAULT_BRANCH=$CI_DEFAULT_BRANCH"
+    - echo "CI_COMMIT_BRANCH=${CI_COMMIT_BRANCH:-}"
+    - echo "CI_DEFAULT_BRANCH=${CI_DEFAULT_BRANCH:-}"
+    - echo "OPENBEAGLE_AGENT_TARGET_BRANCH=$OPENBEAGLE_AGENT_TARGET_BRANCH"
+    - echo "OPENBEAGLE_OLLAMA_BASE_URL=$OPENBEAGLE_OLLAMA_BASE_URL"
+    - echo "OPENBEAGLE_OLLAMA_MODEL=$OPENBEAGLE_OLLAMA_MODEL"
     - curl -s "$OPENBEAGLE_OLLAMA_BASE_URL/api/tags" | jq '.models[].name'
     - bash scripts/collect_commit_context.sh > out/commit_context.json
     - python scripts/generate_agent_review.py out/commit_context.json > out/agent-review.md
