@@ -1,0 +1,30 @@
+stages:
+  - feedback
+
+variables:
+  OPENBEAGLE_OLLAMA_BASE_URL: "http://127.0.0.1:11434"
+  OPENBEAGLE_OLLAMA_MODEL: "qwen3-coder:30b"
+
+ci-feedback:
+  stage: feedback
+  tags:
+    - ollama
+  image: python:3.12-slim
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  before_script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends git curl jq ca-certificates
+    - rm -rf /var/lib/apt/lists/*
+    - python --version
+  script:
+    - mkdir -p out
+    - bash scripts/collect_ci_context.sh > out/ci_context.json
+    - python scripts/generate_ci_feedback.py out/ci_context.json > out/mr-feedback.md
+    - bash scripts/post_mr_note.sh out/mr-feedback.md
+  artifacts:
+    when: always
+    paths:
+      - out/ci_context.json
+      - out/mr-feedback.md
+    expire_in: 7 days
