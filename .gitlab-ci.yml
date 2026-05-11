@@ -4,7 +4,7 @@ spec:
       default: "main"
       description: "Branch the agent should create merge requests against."
     ollama_base_url:
-      default: "http://127.0.0.1:11434"
+      default: "http://host.docker.internal:11434"
       description: "Local Ollama endpoint available to the runner."
     ollama_model:
       default: "gemma4:31b"
@@ -36,7 +36,7 @@ agent-review:
     - when: never
   before_script:
     - apt-get update
-    - apt-get install -y --no-install-recommends git curl jq ca-certificates
+    - apt-get install -y --no-install-recommends git curl jq ca-certificates iproute2
     - rm -rf /var/lib/apt/lists/*
     - python --version
   script:
