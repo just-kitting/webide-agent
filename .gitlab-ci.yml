@@ -4,7 +4,7 @@ spec:
       default: "main"
       description: "Branch the agent should create merge requests against."
     ollama_base_url:
-      default: "http://host.docker.internal:11434"
+      default: "http://127.0.0.1:11434"
       description: "Local Ollama endpoint available to the runner."
     ollama_model:
       default: "qwen3-coder:30b"
