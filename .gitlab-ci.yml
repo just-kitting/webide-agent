@@ -7,7 +7,7 @@ spec:
       default: "http://127.0.0.1:11434"
       description: "Local Ollama endpoint available to the runner."
     ollama_model:
-      default: "qwen3-coder:30b"
+      default: "gemma4:31b"
       description: "Local Ollama model for review generation."
 ---
 
@@ -48,7 +48,6 @@ agent-review:
     - echo "OPENBEAGLE_OLLAMA_BASE_URL=$OPENBEAGLE_OLLAMA_BASE_URL"
     - echo "OPENBEAGLE_OLLAMA_MODEL=$OPENBEAGLE_OLLAMA_MODEL"
     - echo "Testing Ollama connectivity..."
-    - getent hosts host.docker.internal || true
     - ip route || true
     - curl -v --fail-with-body "$OPENBEAGLE_OLLAMA_BASE_URL/api/tags" -o out/ollama-tags.json
     - cat out/ollama-tags.json
