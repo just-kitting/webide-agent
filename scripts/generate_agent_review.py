@@ -84,8 +84,8 @@ def main() -> int:
         print(f"Usage: {sys.argv[0]} <commit_context.json>", file=sys.stderr)
         return 2
 
-    base_url = os.environ.get("OPENBEAGLE_OLLAMA_BASE_URL", "http://127.0.0.1:11434")
-    model = os.environ.get("OPENBEAGLE_OLLAMA_MODEL", "qwen3-coder:30b")
+    base_url = os.environ.get("OPENBEAGLE_OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+    model = os.environ.get("OPENBEAGLE_OLLAMA_MODEL", "gemma4:31b")
 
     with open(sys.argv[1], "r", encoding="utf-8") as f:
         context_obj = json.load(f)
