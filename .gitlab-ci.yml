@@ -51,7 +51,8 @@ agent-review:
     - ip route || true
     - curl -v --fail-with-body "$OPENBEAGLE_OLLAMA_BASE_URL/api/tags" -o out/ollama-tags.json
     - cat out/ollama-tags.json
-    - jq '.models[].name' out/ollama-tags.json    - curl -s "$OPENBEAGLE_OLLAMA_BASE_URL/api/tags" | jq '.models[].name'
+    - jq '.models[].name' out/ollama-tags.json    
+    - curl -s "$OPENBEAGLE_OLLAMA_BASE_URL/api/tags" | jq '.models[].name'
     - bash scripts/collect_commit_context.sh > out/commit_context.json
     - python scripts/generate_agent_review.py out/commit_context.json > out/agent-review.md
     - bash scripts/create_or_update_mr.sh out/agent-review.md
