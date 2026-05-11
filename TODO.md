@@ -1,0 +1,2 @@
+- [ ] Enable CI gitlab-runner to generate MR to satisfy TODO items.
+- [ ] Generate a concrete list of TODO items to satisfy project goals.
