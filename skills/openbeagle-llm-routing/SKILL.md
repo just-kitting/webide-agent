@@ -22,7 +22,7 @@ For CI jobs running on the GitLab runner at `ollama.openbeagle.org`, call Ollama
 
 Default CI model:
 
-    qwen3-coder:30b
+    gemma4:31b
 
 This path does not require a LiteLLM key.
 
@@ -40,7 +40,7 @@ Prefer quality over latency for these jobs because the user is not waiting inter
 Use these defaults for CI feedback jobs:
 
     OPENBEAGLE_OLLAMA_BASE_URL=http://127.0.0.1:11434
-    OPENBEAGLE_OLLAMA_MODEL=qwen3-coder:30b
+    OPENBEAGLE_OLLAMA_MODEL=gemma4:31b
 
 These are not secrets and may be committed as CI defaults.
 
@@ -65,7 +65,7 @@ Use Ollama chat API:
 Example body:
 
     {
-      "model": "qwen3-coder:30b",
+      "model": "gemma4:31b",
       "messages": [
         {
           "role": "user",
