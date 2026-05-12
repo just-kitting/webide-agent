@@ -122,7 +122,6 @@ jq -n \
   '{
     branch: $branch,
     start_sha: $start_sha,
-    force: true,
     commit_message: $commit_message,
     actions: [
       {
